@@ -1,1 +1,32 @@
-A
+backend de maria DB
+
+CREATE DATABASE backend_db;
+USE backend_db;
+
+CREATE TABLE usuarios (
+  dni INT PRIMARY KEY,
+  nombres VARCHAR(100) NOT NULL,
+  apellidos VARCHAR(100) NOT NULL,
+  correo VARCHAR(150),
+  telefono VARCHAR(20) NOT NULL,
+  profesion VARCHAR(100) NOT NULL,
+  rol ENUM('usuario','administrador de proyectos','gerente') NOT NULL,
+  disponibilidad ENUM('disponible','no disponible') NOT NULL,
+  experiencia TEXT,
+  comentarios TEXT,
+  cuenta_bancaria_numero VARCHAR(30),
+  cuenta_bancaria_banco VARCHAR(100),
+  certificaciones JSON
+);
+
+esto va en el env 
+PORT=3307
+DB_HOST=localhost
+DB_USER=root
+DB_PASS=9696
+DB_NAME=backend_db
+
+
+para entrar al swagger ui 
+http://localhost:3307/api-docs/
+funciona con npm run dev
