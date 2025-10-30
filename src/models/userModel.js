@@ -21,8 +21,8 @@ export async function createUser(data) {
   const conn = await pool.getConnection();
   const sql = `
     INSERT INTO usuarios 
-    (dni, nombres, apellidos, correo, telefono, profesion, rol, disponibilidad, certificaciones, experiencia, comentarios, cuenta_bancaria_numero, cuenta_bancaria_banco)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (dni, nombres, apellidos, correo, telefono, profesion, rol, disponibilidad, certificaciones, experiencia, comentarios, cuenta_bancaria_numero, cuenta_bancaria_banco, foto, cv)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
   const values = [
     data.dni,
@@ -38,6 +38,8 @@ export async function createUser(data) {
     data.comentarios || null,
     data.cuenta_bancaria?.numero || null,
     data.cuenta_bancaria?.banco || null,
+    data.foto || null,
+    data.cv || null,
   ];
   await conn.query(sql, values);
   conn.release();
@@ -48,8 +50,20 @@ export async function updateUser(dni, data) {
   const conn = await pool.getConnection();
   const sql = `
     UPDATE usuarios SET
-    nombres=?, apellidos=?, correo=?, telefono=?, profesion=?, rol=?, disponibilidad=?,
-    certificaciones=?, experiencia=?, comentarios=?, cuenta_bancaria_numero=?, cuenta_bancaria_banco=?
+      nombres=?, 
+      apellidos=?, 
+      correo=?, 
+      telefono=?, 
+      profesion=?, 
+      rol=?, 
+      disponibilidad=?,
+      certificaciones=?, 
+      experiencia=?, 
+      comentarios=?, 
+      cuenta_bancaria_numero=?, 
+      cuenta_bancaria_banco=?,
+      foto=?,
+      cv=?
     WHERE dni=?
   `;
   const values = [
@@ -65,6 +79,8 @@ export async function updateUser(dni, data) {
     data.comentarios || null,
     data.cuenta_bancaria?.numero || null,
     data.cuenta_bancaria?.banco || null,
+    data.foto || null,
+    data.cv || null,
     dni,
   ];
   await conn.query(sql, values);

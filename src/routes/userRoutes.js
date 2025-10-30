@@ -1,4 +1,5 @@
 import { Router } from "express";
+import upload from '../config/multer.js';
 import {
   listarUsuarios,
   obtenerUsuario,
@@ -53,12 +54,12 @@ router.get("/usuarios/:dni", obtenerUsuario);
  * @swagger
  * /api/users/usuarios:
  *   post:
- *     summary: Crear un nuevo usuario
+ *     summary: Crear un nuevo usuario con foto y CV opcionales
  *     tags: [Usuarios]
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -76,39 +77,55 @@ router.get("/usuarios/:dni", obtenerUsuario);
  *                 type: string
  *               rol:
  *                 type: string
- *                 enum: [usuario, administrador de proyectos, gerente]
  *               disponibilidad:
  *                 type: string
- *                 enum: [disponible, no disponible]
+ *               foto:
+ *                 type: string
+ *                 format: binary
+ *                 description: Imagen de perfil (jpeg, png)
+ *               cv:
+ *                 type: string
+ *                 format: binary
+ *                 description: Archivo de CV (.pdf o .docx)
  *     responses:
  *       201:
  *         description: Usuario creado correctamente
  */
-router.post("/usuarios", crearUsuario);
+
+router.post(
+  "/usuarios",
+  upload.fields([
+    { name: 'foto', maxCount: 1 },
+    { name: 'cv', maxCount: 1 }
+  ]),
+  crearUsuario
+);
 
 /**
  * @swagger
  * /api/users/usuarios/{dni}:
  *   put:
- *     summary: Actualizar un usuario por DNI
+ *     summary: Actualizar un usuario (incluye foto y CV opcionales)
  *     tags: [Usuarios]
  *     parameters:
  *       - in: path
  *         name: dni
  *         schema:
- *           type: integer
+ *           type: string
  *         required: true
  *         description: DNI del usuario a actualizar
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               nombres:
  *                 type: string
  *               apellidos:
+ *                 type: string
+ *               correo:
  *                 type: string
  *               telefono:
  *                 type: string
@@ -118,13 +135,33 @@ router.post("/usuarios", crearUsuario);
  *                 type: string
  *               disponibilidad:
  *                 type: string
+ *               experiencia:
+ *                 type: string
+ *               comentarios:
+ *                 type: string
+ *               foto:
+ *                 type: string
+ *                 format: binary
+ *                 description: Imagen (jpg, png)
+ *               cv:
+ *                 type: string
+ *                 format: binary
+ *                 description: Archivo PDF o Word
  *     responses:
  *       200:
  *         description: Usuario actualizado correctamente
  *       404:
  *         description: Usuario no encontrado
  */
-router.put("/usuarios/:dni", actualizarUsuario);
+
+router.put(
+  "/usuarios/:dni",
+  upload.fields([
+    { name: "foto", maxCount: 1 },
+    { name: "cv", maxCount: 1 },
+  ]),
+  actualizarUsuario
+);
 
 /**
  * @swagger
@@ -146,5 +183,12 @@ router.put("/usuarios/:dni", actualizarUsuario);
  *         description: Usuario no encontrado
  */
 router.delete("/usuarios/:dni", eliminarUsuario);
+
+//para fotos en post
+/**se accede a las fotos o cvs asi
+http://localhost:3307/uploads/fotos/foto-12345.png
+http://localhost:3307/uploads/cvs/cv-67890.pdf
+**/
+
 
 export default router;
